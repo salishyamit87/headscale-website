@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Mail, Lock, Eye, EyeOff, Github, Chrome, Microsoft } from 'lucide-react';
@@ -9,11 +9,19 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   const router = useRouter();
 
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!isClient) return;
+    
     setLoading(true);
     setError('');
 
@@ -22,7 +30,7 @@ const Login = () => {
       localStorage.setItem('user', JSON.stringify({ email, name: 'Demo User' }));
       router.push('/dashboard');
     } else {
-      setError('Invalid email or password');
+      setError('Invalid email or password. Try: demo@example.com / password');
     }
     setLoading(false);
   };
@@ -30,6 +38,17 @@ const Login = () => {
   const handleOAuthLogin = (provider) => {
     alert(`${provider} OAuth - Coming Soon`);
   };
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -57,6 +76,14 @@ const Login = () => {
               {error}
             </div>
           )}
+
+          <div className="mb-4 bg-blue-50 border border-blue-200 text-blue-600 px-4 py-3 rounded">
+            <p className="text-sm">
+              <strong>Demo Credentials:</strong><br />
+              Email: demo@example.com<br />
+              Password: password
+            </p>
+          </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
@@ -111,26 +138,6 @@ const Login = () => {
                     <Eye className="h-5 w-5 text-gray-400" />
                   )}
                 </button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                  Forgot your password?
-                </a>
               </div>
             </div>
 

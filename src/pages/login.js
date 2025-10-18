@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Mail, Lock, Eye, EyeOff, Github, Chrome, Microsoft } from 'lucide-react';
@@ -9,28 +9,26 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
 
   const router = useRouter();
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!isClient) return;
-    
     setLoading(true);
     setError('');
 
-    // Temporary login - baad mein actual API integrate karenge
-    if (email === 'demo@example.com' && password === 'password') {
-      localStorage.setItem('user', JSON.stringify({ email, name: 'Demo User' }));
+    // Simple demo login
+    if (email && password) {
+      // Client-side check
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify({ 
+          email, 
+          name: 'Demo User' 
+        }));
+      }
       router.push('/dashboard');
     } else {
-      setError('Invalid email or password. Try: demo@example.com / password');
+      setError('Please enter both email and password');
     }
     setLoading(false);
   };
@@ -38,17 +36,6 @@ const Login = () => {
   const handleOAuthLogin = (provider) => {
     alert(`${provider} OAuth - Coming Soon`);
   };
-
-  if (!isClient) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -79,9 +66,7 @@ const Login = () => {
 
           <div className="mb-4 bg-blue-50 border border-blue-200 text-blue-600 px-4 py-3 rounded">
             <p className="text-sm">
-              <strong>Demo Credentials:</strong><br />
-              Email: demo@example.com<br />
-              Password: password
+              <strong>Demo:</strong> Enter any email and password to login
             </p>
           </div>
 

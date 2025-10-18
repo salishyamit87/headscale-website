@@ -1,28 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { LogOut, Users, Server, Settings, Shield } from 'lucide-react';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
-  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    setIsClient(true);
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      router.push('/login');
-    } else {
-      setUser(JSON.parse(userData));
+    // Client-side check
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('user');
+      if (!userData) {
+        router.push('/login');
+      } else {
+        setUser(JSON.parse(userData));
+      }
     }
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user');
+    }
     router.push('/login');
   };
 
-  if (!isClient || !user) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
@@ -35,7 +39,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Navigation */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
@@ -57,7 +60,6 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto py-6 px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
@@ -107,20 +109,6 @@ const Dashboard = () => {
               View Routes
             </button>
           </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6 mt-6">
-          <h2 className="text-xl font-semibold mb-4">Coming Soon</h2>
-          <p className="text-gray-600">
-            Full Headscale management features will be available soon. This includes:
-          </p>
-          <ul className="list-disc list-inside mt-2 text-gray-600">
-            <li>User Management</li>
-            <li>Node Management</li>
-            <li>Route Configuration</li>
-            <li>ACL Management</li>
-            <li>DNS Settings</li>
-          </ul>
         </div>
       </div>
     </div>

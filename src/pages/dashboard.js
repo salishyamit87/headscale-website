@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import { LogOut, Users, Server, Settings, Shield } from 'lucide-react';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    setIsClient(true);
     const userData = localStorage.getItem('user');
     if (!userData) {
       router.push('/login');
@@ -21,8 +22,15 @@ const Dashboard = () => {
     router.push('/login');
   };
 
-  if (!user) {
-    return <div>Loading...</div>;
+  if (!isClient || !user) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading Dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

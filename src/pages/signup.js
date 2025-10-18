@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Mail, Lock, User, Eye, EyeOff, Github, Chrome, Microsoft } from 'lucide-react';
@@ -13,13 +13,8 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
 
   const router = useRouter();
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -30,9 +25,6 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!isClient) return;
-    
     setLoading(true);
     setError('');
 
@@ -42,11 +34,13 @@ const Signup = () => {
       return;
     }
 
-    // Temporary signup - baad mein actual API integrate karenge
-    localStorage.setItem('user', JSON.stringify({ 
-      email: formData.email, 
-      name: formData.name 
-    }));
+    // Simple signup
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify({ 
+        email: formData.email, 
+        name: formData.name 
+      }));
+    }
     
     router.push('/dashboard');
     setLoading(false);
@@ -55,17 +49,6 @@ const Signup = () => {
   const handleOAuthSignup = (provider) => {
     alert(`${provider} OAuth - Coming Soon`);
   };
-
-  if (!isClient) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
